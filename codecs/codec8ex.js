@@ -236,7 +236,22 @@ class Codec8e extends Codec {
     for (var i = 0; i < ioCountIntX; i++) {
       let property_id = this.toInt(this.reader.ReadBytes(2));
       let ioValueLength = this.toInt(this.reader.ReadBytes(2));
-      let value = this.toString(this.reader.ReadBytes(ioValueLength));
+      let rawBytes = this.reader.ReadBytes(ioValueLength);
+      let value;
+
+      // Special handling for Driver Name (36-byte string)
+      if ([10518, 10519, 10520, 10521].includes(property_id)) {
+        value = Buffer.from(rawBytes)
+          .toString("latin1")   // ISO/IEC 8859-1
+          .replace(/\0/g, "")   // strip padding nulls
+          .trim();        
+      } else {
+        // Default parsing
+        value = this.toString(rawBytes);
+      }
+
+      // let value = this.toString(this.reader.ReadBytes(ioValueLength));
+
       ioElement.push({
         id: property_id,
         value: value,

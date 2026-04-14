@@ -240,7 +240,7 @@ class Codec8e extends Codec {
       let value;
 
       // Special handling for Driver Name (36-byte string)
-      if ([10518, 10519, 10520, 10521].includes(property_id)) {
+      if ([10518, 10519, 10520, 10521,282].includes(property_id)) {
         value = Buffer.from(rawBytes)
           .toString("latin1")   // ISO/IEC 8859-1
           .replace(/\0/g, "")   // strip padding nulls
